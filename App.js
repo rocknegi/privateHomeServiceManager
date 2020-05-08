@@ -3,8 +3,9 @@ import { View, Text } from 'react-native'
 import { createAppContainer, createSwitchNavigator, SafeAreaView } from 'react-navigation'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/FontAwesome';
-const myIcon = <Icon name="rocket" size={30} color="#900" />;
+import { createDrawerNavigator } from 'react-navigation-drawer';
 Icon.loadFont()
+
 const Login = ({navigation})=>{
   return(
     <SafeAreaView>
@@ -20,7 +21,7 @@ const Dashboard = ({navigation})=>{
   return(
     <SafeAreaView>
       <Text>Dashboard</Text>
-      {myIcon}
+      <Icon name="rocket" size={30} color="#900" onPress={()=>navigation.openDrawer()}/>
       <TouchableOpacity onPress={()=>navigation.navigate('Login')}>
         <Text>Go Back</Text>
       </TouchableOpacity>
@@ -28,9 +29,13 @@ const Dashboard = ({navigation})=>{
   )
 }
 
+const DrawerNavigation = createDrawerNavigator({
+  Dashboard
+})
+
 const AppNavigator = createSwitchNavigator({
   Login,
-  Dashboard
+  Dashboard : DrawerNavigation
 })
 
 const AppContainer = createAppContainer(AppNavigator)
