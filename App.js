@@ -5,7 +5,15 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 Icon.loadFont()
-
+import firestore from '@react-native-firebase/firestore';
+const usersCollection = firestore().collection('Boys');
+usersCollection.onSnapshot((snapshot) => {
+  const data = [];
+  snapshot.forEach(doc => {
+      data.push(({ ...doc.data(), id: doc.id }))
+  })
+  alert(JSON.stringify(data,undefined,3))
+});
 const Login = ({navigation})=>{
   return(
     <SafeAreaView>

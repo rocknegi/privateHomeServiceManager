@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-firebase/app": "^7.0.1",
+    "@react-native-firebase/firestore": "^7.0.1",
     "add": "^2.0.6",
     "react": "16.11.0",
     "react-native": "0.62.2",
