@@ -5,20 +5,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import Login from './src/components/Login';
+import Dashboard from './src/components/Dashboard';
 Icon.loadFont()
-
-
-const Dashboard = ({navigation})=>{
-  return(
-    <SafeAreaView>
-      <Text>Dashboard</Text>
-      <Icon name="rocket" size={30} color="#900" onPress={()=>navigation.openDrawer()}/>
-      <TouchableOpacity onPress={()=>navigation.navigate('Login')}>
-        <Text>Go Back</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
-  )
-}
 
 const DrawerNavigation = createDrawerNavigator({
   Dashboard

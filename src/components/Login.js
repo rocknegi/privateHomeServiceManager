@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View, Text, SafeAreaView, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native'
 import { styles } from './theme/theme'
 
-const Login = () => {
+const Login = ({navigation}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -30,7 +30,9 @@ const Login = () => {
                                 onChange={e => setPassword(e.target.value)}
                             />
                         </View>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity 
+                        onPress={()=>navigation.navigate('Dashboard')}
+                        style={styles.button}>
                             <Text style={styles.buttonText}>
                                 Login
                 </Text>
