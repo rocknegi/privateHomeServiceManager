@@ -4,26 +4,9 @@ import { createAppContainer, createSwitchNavigator, SafeAreaView } from 'react-n
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator } from 'react-navigation-drawer';
+import Login from './src/components/Login';
 Icon.loadFont()
-import firestore from '@react-native-firebase/firestore';
-const usersCollection = firestore().collection('Boys');
-usersCollection.onSnapshot((snapshot) => {
-  const data = [];
-  snapshot.forEach(doc => {
-      data.push(({ ...doc.data(), id: doc.id }))
-  })
-  alert(JSON.stringify(data,undefined,3))
-});
-const Login = ({navigation})=>{
-  return(
-    <SafeAreaView>
-      <Text>Login Screen</Text>
-      <TouchableOpacity onPress={()=>navigation.navigate('Dashboard')}>
-        <Text>Login</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
-  )
-}
+
 
 const Dashboard = ({navigation})=>{
   return(
