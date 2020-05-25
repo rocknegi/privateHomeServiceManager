@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
         backgroundColor: '#fafafa'
     },
     button: {
-        backgroundColor: '#D87314',
+        backgroundColor: '#cfd8dc',
         alignSelf: 'center',
         padding: 10,
         paddingHorizontal: '8%',
@@ -36,11 +36,12 @@ export const styles = StyleSheet.create({
         padding: 10
     },
     card: {
-        elevation: 1,
+        elevation: 8,
         height:100,
         padding:15,
         margin:10,
-        borderRadius:2,
+        borderRadius:6,
         minWidth:150,
+        backgroundColor:"#eee"
     }
 })
