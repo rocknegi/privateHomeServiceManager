@@ -41,23 +41,25 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        let data = [];
-        return orders.where('assigned','==',false).onSnapshot(snapshot => {
+        return orders.where('assigned','==',false).onSnapshot((snapshot) => {
+            let data = [];
             snapshot.forEach(doc => {
                 data.push(({ ...doc.data(), id: doc.id }))
             })
             setData(data)
         })
     }, [])
-    useEffect(() => {
+
+useEffect(()=>{
+    return boys.onSnapshot((snapshot) => {
         let data = [];
-        return boys.onSnapshot(snapshot => {
-            snapshot.forEach(doc => {
-                data.push(({ ...doc.data(), id: doc.id }))
-            })
-            setBoysData(data)
+        snapshot.forEach(doc => {
+            data.push(({ ...doc.data(), id: doc.id }))
         })
-    }, [])
+        console.log(data)
+        setBoysData(data)
+    })
+},[])
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -146,6 +148,7 @@ const Dashboard = () => {
                         <View style={{ padding: 10, alignSelf: 'center', flex: 1 }}>
                             <Text style={{ fontSize: 20 }}>{item.name}</Text>
                             <Text style={{ fontSize: 20 }}>{item.phone}</Text>
+                            {item.available?<Text style={{ fontSize: 20 }}>Available</Text>:<Text style={{ fontSize: 20 }}>Not available</Text>}
                         </View>
                         <View style={{ alignSelf: 'center', flex: 1 }}>
                             {item.available && <TouchableOpacity style={[styles.button]}>
