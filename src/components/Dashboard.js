@@ -47,7 +47,7 @@ const Dashboard = () => {
         return orders.where('accepted','==',false).onSnapshot((snapshot) => {
             let data = [];
             snapshot.forEach(doc => {
-                data.push(({ ...doc.data(), id: doc.id }))
+                data.push({ ...doc.data()})
             })
             setData(data)
         })
@@ -104,14 +104,15 @@ useEffect(()=>{
         orders.doc(number.toString()).collection('Orders').get().then(snapshot=>{
             let data = [];
             snapshot.forEach(doc=>{
-            data.push(({...doc.data()}))    
+            data.push({...doc.data()})    
             })
             setSentData(data)
         });
 
         boys.doc(boyname).collection('orders').doc('order').set({
             ...sentData[0]
-        })
+        });
+        setOrderModal(false)
     }
 
     return (
@@ -130,7 +131,7 @@ useEffect(()=>{
                 >
                          <View style={{ backgroundColor: '#fafafa' }}>
                             {data.map(item => (
-                        <TouchableWithoutFeedback key={item.id} onPress={()=>setOrder(item.phoneNo)}>
+                        <TouchableWithoutFeedback key={item.phoneNo} onPress={()=>setOrder(item.phoneNo)}>
                             <View style={[styles.card, { justifyContent: 'space-evenly' }]}>
                                 <Text style={[styles.text, { fontSize: 18 }]}>{item.name}</Text>
                                 <Text style={[styles.text, { fontSize: 15 }]}>{item.phoneNo}</Text>
