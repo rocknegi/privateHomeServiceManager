@@ -36,12 +36,15 @@ const Dashboard = () => {
     const [data, setData] = useState([]);
     const [boysData, setBoysData] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [orderModal, setOrderModal] = useState(false);
     const [currentUser, setCurrentUser] = useState('');
     const [currentOrderData, setCurrentOrderData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [boyname,setBoyName] = useState('');
+    const [sentData,setSentData] = useState([])
 
     useEffect(() => {
-        return orders.where('assigned','==',false).onSnapshot((snapshot) => {
+        return orders.where('accepted','==',false).onSnapshot((snapshot) => {
             let data = [];
             snapshot.forEach(doc => {
                 data.push(({ ...doc.data(), id: doc.id }))
@@ -56,7 +59,6 @@ useEffect(()=>{
         snapshot.forEach(doc => {
             data.push(({ ...doc.data(), id: doc.id }))
         })
-        console.log(data)
         setBoysData(data)
     })
 },[])
@@ -73,7 +75,6 @@ useEffect(()=>{
     const afterModalOpen = () => {
         const phone = currentUser
         const str = phone.toString()
-        console.log(str)
         let data = [];
 
         orders.doc(str).collection('Orders').doc('order').onSnapshot(doc => {
@@ -94,10 +95,55 @@ useEffect(()=>{
 
     }
 
+    const sendOrder = (name)=>{
+        setBoyName(name);
+        setOrderModal(true)
+    }
+    const setOrder = (phone)=>{
+        const number = phone;
+        orders.doc(number.toString()).collection('Orders').get().then(snapshot=>{
+            let data = [];
+            snapshot.forEach(doc=>{
+            data.push(({...doc.data()}))    
+            })
+            setSentData(data)
+        });
+
+        boys.doc(boyname).collection('orders').doc('order').set({
+            ...sentData[0]
+        })
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Text style={{ fontSize: 20, padding: 10 }}>Incoming orders</Text>
+                <Modal
+                    isVisible={orderModal}
+                    // onModalShow={afterModalOpen}
+                    style={{
+                        justifyContent: 'center',
+                        // margin: 0,
+                    }}
+                    // onBackdropPress={toggleModal}
+                    swipeDirection={['up', 'left', 'right', 'down']}
+                >
+                         <View style={{ backgroundColor: '#fafafa' }}>
+                            {data.map(item => (
+                        <TouchableWithoutFeedback key={item.id} onPress={()=>setOrder(item.phoneNo)}>
+                            <View style={[styles.card, { justifyContent: 'space-evenly' }]}>
+                                <Text style={[styles.text, { fontSize: 18 }]}>{item.name}</Text>
+                                <Text style={[styles.text, { fontSize: 15 }]}>{item.phoneNo}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    ))}
+                            <TouchableOpacity onPress={()=>setOrderModal(false)} style={[styles.button, { margin: 10 }]}>
+                                <Text style={styles.text}>
+                                    close
+                            </Text>
+                            </TouchableOpacity>
+                        </View>
+                </Modal>
                 <Modal
                     isVisible={isModalVisible}
                     onModalShow={afterModalOpen}
@@ -151,7 +197,9 @@ useEffect(()=>{
                             {item.available?<Text style={{ fontSize: 20 }}>Available</Text>:<Text style={{ fontSize: 20 }}>Not available</Text>}
                         </View>
                         <View style={{ alignSelf: 'center', flex: 1 }}>
-                            {item.available && <TouchableOpacity style={[styles.button]}>
+                            {item.available && <TouchableOpacity 
+                            onPress={()=>sendOrder(item.name)}
+                            style={[styles.button]}>
                                 <Text style={[styles.buttonText, { fontSize: 13, color: '#000' }]}>
                                     Send Order
                                 </Text>
