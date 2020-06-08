@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, SafeAreaView, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Button, ActivityIndicator } from 'react-native'
+import { View, Text, SafeAreaView, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Button, ActivityIndicator,Image } from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 import Modal from 'react-native-modal';
 
-import { styles } from './theme/theme';
+import { styles, PrimayColor } from './theme/theme';
 
 const orders = firestore().collection('Managers');
 const boys = firestore().collection('Boys');
@@ -32,6 +32,10 @@ const boys = firestore().collection('Boys');
 //         completed:false
 //     })
 
+// boys.doc('boy6').update({
+//     FBK:false
+// })
+
 const Dashboard = () => {
     const [data, setData] = useState([]);
     const [boysData, setBoysData] = useState([]);
@@ -41,7 +45,7 @@ const Dashboard = () => {
     const [currentOrderData, setCurrentOrderData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [boyname,setBoyName] = useState('');
-    const [sentData,setSentData] = useState([])
+    // const [sentData,setSentData] = useState([])
 
     useEffect(() => {
         return orders.where('accepted','==',false).onSnapshot((snapshot) => {
@@ -106,20 +110,20 @@ useEffect(()=>{
             snapshot.forEach(doc=>{
             data.push({...doc.data()})    
             })
-            setSentData(data)
+            console.log(data)
+            boys.doc(boyname).collection('orders').doc('order').set({
+                ...data[0]
+            });
+            setOrderModal(false)
         });
 
-        boys.doc(boyname).collection('orders').doc('order').set({
-            ...sentData[0]
-        });
-        setOrderModal(false)
+
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <Text style={{ fontSize: 20, padding: 10 }}>Incoming orders</Text>
-                <Modal
+            <Modal
                     isVisible={orderModal}
                     // onModalShow={afterModalOpen}
                     style={{
@@ -172,6 +176,8 @@ useEffect(()=>{
                             </TouchableOpacity>
                         </View>}
                 </Modal>
+                {/* <Text style={{ fontSize: 20, padding: 10 }}>Incoming orders</Text>
+               
                 <ScrollView horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     style={{ marginTop: 5 }}>
@@ -207,8 +213,56 @@ useEffect(()=>{
                             </TouchableOpacity>}
                         </View>
                     </View>
-                ))}
+                ))} */}
 
+                <View style={styles.header}>
+                    <Image 
+                    style={styles.menu}
+                    source={require('../assets/images/menu.webp')}/>
+                     <Image 
+                    style={{height:25,width:25,alignSelf:'center',marginRight:10}}
+                    source={require('../assets/images/user.webp')}/>
+                </View>
+
+                <Text style={styles.heading}>Incoming Orders</Text>
+                <View style={styles.table}>
+                    <Text style={{flex:0.5,textAlign:'center'}}>O.Nr.</Text>
+                    <Text style={{flex:0.7,textAlign:'center'}}>Desc</Text>
+                    <Text style={{flex:0.8,textAlign:'center'}}>TM</Text>
+                    <Text style={{flex:0.5,textAlign:'center'}}>SRV</Text>
+                    <Text style={{flexGrow:1,flex:1,textAlign:'center'}}>Acc</Text>
+                    <Text style={{flex:1,textAlign:'center'}}>REST</Text>
+                    <Text style={{flex:0,textAlign:'center',right:2}}>LOC</Text>
+                </View>
+                {data.map(item => (
+                            <View key={item.orderNo} style={styles.table}>
+                                <Text style={{flex:0.5,textAlign:'center'}}>{item.orderNo}</Text>
+                                <Text style={{flex:0.7,textAlign:'center'}}>Desc</Text>
+                                <Text style={{flex:0.8,textAlign:'center'}}>{item.deliveryTime}</Text>
+                                <Text style={{flex:0.5,textAlign:'center'}}>{item.serviceDuration}</Text>
+                                <Text style={{flexGrow:1,flex:1,textAlign:'center'}}>{item.name}</Text>
+                                <Text style={{flex:1,textAlign:'center'}}>{item.balance}</Text>
+                                <Text style={{flex:0,textAlign:'center',right:2}}>LOC</Text>
+                            </View>
+                    ))}
+
+                <Text style={styles.heading}>Hotess</Text>
+                {boysData.map(item => (
+                <View key={item.name}style={styles.table}>
+                {item.available?<View style={styles.green}></View>:<View style={styles.red}></View>}
+                <Text style={{flex:0.7,textAlign:'center'}}>PIC</Text>
+                <Text style={{flexGrow:0.2,textAlign:'center'}}>{item.name}</Text>
+                <Text style={{flexGrow:1,flex:1,textAlign:'center'}}>{item.phone}</Text>
+                {/* <Text style={{flexGrow:0.2,textAlign:'center'}}>DIST</Text> */}
+                {/* <Text style={{flex:0.5,textAlign:'center'}}>ST</Text> */}
+                <TouchableOpacity 
+                 onPress={()=>sendOrder(item.name)}
+                style={[styles.button,{flex:0.4}]}>
+                    <Text style={styles.buttonText}>ASSG</Text>
+                </TouchableOpacity>
+                <Text style={{flex:0,textAlign:'center',right:2}}>FBK</Text>
+            </View>
+                ))}
             </ScrollView>
         </SafeAreaView>
     )
