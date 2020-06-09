@@ -36,7 +36,7 @@ const boys = firestore().collection('Boys');
 //     FBK:false
 // })
 
-const Dashboard = () => {
+const Dashboard = ({navigation}) => {
     const [data, setData] = useState([]);
     const [boysData, setBoysData] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
@@ -219,9 +219,11 @@ useEffect(()=>{
                     <Image 
                     style={styles.menu}
                     source={require('../assets/images/menu.webp')}/>
+                     <TouchableWithoutFeedback onPress={()=>navigation.navigate('Account')}>
                      <Image 
                     style={{height:25,width:25,alignSelf:'center',marginRight:10}}
                     source={require('../assets/images/user.webp')}/>
+                     </TouchableWithoutFeedback>
                 </View>
 
                 <Text style={styles.heading}>Incoming Orders</Text>

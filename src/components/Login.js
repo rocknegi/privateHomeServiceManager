@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard, FlatList, ColorPropType, KeyboardAvoidingView, Dimensions, Platform, SafeAreaView } from 'react-native'
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard, FlatList, ColorPropType, KeyboardAvoidingView, Dimensions, Platform, SafeAreaView, AsyncStorage, ToastAndroid } from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 
 const data = firestore().collection('ManagersData');
@@ -23,10 +23,14 @@ export default class index extends Component {
         let email = countryCode + this.state.username + '@domainName.com';
         data.doc(email).get().then(data=>{
             if(data["_data"]===undefined)
-            alert('This phone no does not exist')
+            ToastAndroid.showWithGravity('User with this phone no does not exist',ToastAndroid.SHORT,ToastAndroid.BOTTOM)
+
             else if(data["_data"]["pass"]!=this.state.password)
-            alert('wrong password')
-            else this.props.navigation.navigate('Dashboard')
+            ToastAndroid.showWithGravity('Wrong password',ToastAndroid.SHORT,ToastAndroid.BOTTOM)
+            else {
+                this.props.navigation.navigate('Dashboard')
+                AsyncStorage.setItem('user',email)
+            }
         })
        
     }

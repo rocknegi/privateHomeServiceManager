@@ -83,5 +83,13 @@ export const styles = StyleSheet.create({
         width:20,
         borderRadius:10,
         marginLeft:5
-    }
+    },
+    buttonContainer: {
+        backgroundColor: PrimayColor,
+        borderRadius: 100,
+        marginHorizontal: '18%',
+        height: 50,
+        justifyContent: 'center',
+        marginBottom: 20
+    },
 })

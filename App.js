@@ -7,10 +7,12 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 import Login from './src/components/Login';
 import Dashboard from './src/components/Dashboard';
 import landingPage from './src/components/LandingPage';
+import Account from './src/components/Account';
 Icon.loadFont()
 
 const DrawerNavigation = createDrawerNavigator({
-  Dashboard
+  Dashboard,
+  Account
 })
 
 const AppNavigator = createSwitchNavigator({
