@@ -41,8 +41,10 @@ const Dashboard = ({navigation}) => {
     const [boysData, setBoysData] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
     const [orderModal, setOrderModal] = useState(false);
+    const [imageModal, setImageModal] = useState(false);
     const [currentUser, setCurrentUser] = useState('');
     const [currentOrderData, setCurrentOrderData] = useState([]);
+    const [currentImage, setCurrentImage] = useState('');
     const [loading, setLoading] = useState(true);
     const [boyname,setBoyName] = useState('');
     // const [sentData,setSentData] = useState([])
@@ -176,6 +178,19 @@ useEffect(()=>{
                             </TouchableOpacity>
                         </View>}
                 </Modal>
+                <Modal
+                    isVisible={imageModal}
+                    swipeDirection={['up', 'left', 'right', 'down']}
+                >
+                         <View style={{ backgroundColor: '#fafafa' }}>
+                         <Image style={{height:400,width:300,resizeMode:'contain',alignSelf:'center',margin:10}} source={{uri:currentImage}}/>
+                            <TouchableOpacity onPress={()=>setImageModal(false)} style={[styles.button, { margin: 10,padding:10 }]}>
+                                <Text style={styles.text}>
+                                    close
+                            </Text>
+                            </TouchableOpacity>
+                        </View>
+                </Modal>
                 {/* <Text style={{ fontSize: 20, padding: 10 }}>Incoming orders</Text>
                
                 <ScrollView horizontal={true}
@@ -252,17 +267,20 @@ useEffect(()=>{
                 {boysData.map(item => (
                 <View key={item.name}style={styles.table}>
                 {item.available?<View style={styles.green}></View>:<View style={styles.red}></View>}
-                <Text style={{flex:0.7,textAlign:'center'}}>PIC</Text>
-                <Text style={{flexGrow:0.2,textAlign:'center'}}>{item.name}</Text>
-                <Text style={{flexGrow:1,flex:1,textAlign:'center'}}>{item.phone}</Text>
+                {/* <Text style={{flex:0.7,textAlign:'center'}}>{}</Text> */}
+                <TouchableWithoutFeedback onPress={()=>{setCurrentImage(item.image);setImageModal(true)}}>
+                <Image style={{height:50,width:50,flex:0.5,resizeMode:'contain'}} source={{uri:item.image}}/>
+                </TouchableWithoutFeedback>
+                <Text style={{flexGrow:0.5,flex:1,textAlign:'center',alignSelf:'center',flexWrap:'wrap'}}>{item.name}</Text>
+                <Text style={{flexGrow:1,flex:1,textAlign:'center',alignSelf:'center'}}>{item.phone}</Text>
                 {/* <Text style={{flexGrow:0.2,textAlign:'center'}}>DIST</Text> */}
                 {/* <Text style={{flex:0.5,textAlign:'center'}}>ST</Text> */}
                 <TouchableOpacity 
                  onPress={()=>sendOrder(item.name)}
-                style={[styles.button,{flex:0.4}]}>
+                style={[styles.button,{flex:0.3,alignSelf:'center',right:10}]}>
                     <Text style={styles.buttonText}>ASSG</Text>
                 </TouchableOpacity>
-                <Text style={{flex:0,textAlign:'center',right:2}}>FBK</Text>
+                <Text style={{flex:0,textAlign:'center',right:5,alignSelf:'center'}}>FBK</Text>
             </View>
                 ))}
             </ScrollView>

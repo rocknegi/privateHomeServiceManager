@@ -20,7 +20,7 @@ const AppNavigator = createSwitchNavigator({
   Login,
   Dashboard : DrawerNavigation
 },{
-  initialRouteName:'landingPage'
+  initialRouteName:'Dashboard'
 })
 
 const AppContainer = createAppContainer(AppNavigator)

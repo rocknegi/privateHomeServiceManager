@@ -74,7 +74,8 @@ export const styles = StyleSheet.create({
         height:20,
         width:20,
         borderRadius:10,
-        marginLeft:5
+        marginLeft:5,
+        alignSelf:'center'
     },
     red:{
         backgroundColor:'red',
@@ -82,7 +83,8 @@ export const styles = StyleSheet.create({
         height:20,
         width:20,
         borderRadius:10,
-        marginLeft:5
+        marginLeft:5,
+        alignSelf:'center'
     },
     buttonContainer: {
         backgroundColor: PrimayColor,
