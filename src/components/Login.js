@@ -1,49 +1,140 @@
-import React, { useState } from 'react'
-import { View, Text, SafeAreaView, TextInput, TouchableOpacity, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native'
-import { styles } from './theme/theme'
+import React, { Component } from 'react'
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Keyboard, FlatList, ColorPropType, KeyboardAvoidingView, Dimensions, Platform, SafeAreaView } from 'react-native'
+import firestore from '@react-native-firebase/firestore';
 
-const Login = ({navigation}) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+const data = firestore().collection('ManagersData');
+const PrimayColor = '#D87314';
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={styles.container}>
+export default class index extends Component {
+    state = {
+        dialingCode: '+237',
+        username:'',
+        password:''
+    }
+
+    static navigationOptions = () => {
+        return {
+            headerShown: false
+        }
+    }
+
+    checkCreds = ()=>{
+        let countryCode = '+237'
+        let email = countryCode + this.state.username + '@domainName.com';
+        data.doc(email).get().then(data=>{
+            if(data["_data"]===undefined)
+            alert('This phone no does not exist')
+            else if(data["_data"]["pass"]!=this.state.password)
+            alert('wrong password')
+            else this.props.navigation.navigate('Dashboard')
+        })
+       
+    }
+    render() {
+        return (
+            <SafeAreaView style={styles.container}>
+
+                <Image
+                    style={styles.logo}
+                    source={require('../assets/images/logo_white.png')}
+                />
+                <Text style={{ fontSize: Platform.OS === 'android' ? 25 : 16, fontFamily: Platform.OS === 'android' ? 'HT Gelateria W01 Regular' : 'ComicSansMS', textAlign: 'center', marginBottom: 10 }}>
+                    Vos besoins sont nos Services
+                    </Text>
+
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <View style={styles.form}>
-                        <View style={styles.inputContainer}>
+                    <View style={{marginTop:'10%'}}>
+                        <View style={styles.field}>
+                            <TextInput style={{ marginLeft: 5 }}>{`${this.state.dialingCode}`}</TextInput>
                             <TextInput
-                                placeholder="Email"
-                                value={username}
-                                textContentType='emailAddress'
-                                autoCapitalize="none"
-                                style={styles.input}
-                                onChange={e => setUsername(e.target.value)}
-                            />
-                            <TextInput
-                                placeholder="Password"
-                                value={password}
-                                secureTextEntry={true}
-                                style={styles.input}
-                                onChange={e => setPassword(e.target.value)}
+                                // placeholder="Telefon no is Obligatory"
+                                style={[styles.input]}
+                                keyboardType={'number-pad'}
+                                value={this.state.username}
+                                onChangeText={(value)=>this.setState({username:value})}
                             />
                         </View>
-                        <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Dashboard')}
-                        style={styles.button}>
-                            <Text style={styles.buttonText}>
-                                Login
-                </Text>
+
+                        <View style={[styles.field,{flexDirection:'column',marginTop:5}]}>
+                            <TextInput
+                                placeholder="Password"
+                                style={[styles.input,{textAlign:'center'}]}
+                                autoCapitalize='none'
+                                value={this.state.password}
+                                onChangeText={(value)=>this.setState({password:value})}
+                            />
+                        </View>
+
+                        <TouchableOpacity style={styles.buttonContainer} onPress={this.checkCreds}>
+                            <Text style={styles.buttonText}>Continue</Text>
                         </TouchableOpacity>
+
                     </View>
-
                 </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
 
-        </SafeAreaView>
-    )
+            </SafeAreaView>
+        )
+    }
 }
-
-export default Login
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        // justifyContent: 'center',
+        backgroundColor: '#fafafa'
+    },
+    logo: {
+        resizeMode: 'contain',
+        alignSelf: 'center',
+        height: 150,
+        width: 150,
+        // marginBottom: 5
+    },
+    field: {
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderRadius: 100,
+        alignItems: "center",
+        backgroundColor: '#fafafa',
+        marginBottom: 20,
+        marginTop: 10,
+        marginHorizontal: '18%',
+        borderColor: PrimayColor
+    },
+    icon: {
+        color: '#999999', paddingLeft: 10, fontSize: 20
+    },
+    input: {
+        height: 50,
+        color: '#757575',
+        paddingHorizontal: 10,
+        width: '100%'
+    },
+    buttonContainer: {
+        backgroundColor: PrimayColor,
+        borderRadius: 100,
+        marginHorizontal: '18%',
+        height: 50,
+        justifyContent: 'center',
+        marginBottom: 20
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    signup: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignSelf: 'center',
+        paddingBottom: 10
+    },
+    modal: {
+        flexDirection: 'row', justifyContent: 'space-between'
+    },
+    modalText: {
+        fontSize: 22,
+        flexWrap: 'wrap',
+        textAlign: 'center'
+    }
+})

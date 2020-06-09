@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import Login from './src/components/Login';
 import Dashboard from './src/components/Dashboard';
+import landingPage from './src/components/LandingPage';
 Icon.loadFont()
 
 const DrawerNavigation = createDrawerNavigator({
@@ -13,8 +14,11 @@ const DrawerNavigation = createDrawerNavigator({
 })
 
 const AppNavigator = createSwitchNavigator({
+  landingPage,
   Login,
   Dashboard : DrawerNavigation
+},{
+  initialRouteName:'landingPage'
 })
 
 const AppContainer = createAppContainer(AppNavigator)
