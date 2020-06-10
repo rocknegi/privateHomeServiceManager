@@ -55,7 +55,9 @@ const Dashboard = ({navigation}) => {
     // const [sentData,setSentData] = useState([])
 
     useEffect(() => {
-        return orders.where('accepted','==',false).onSnapshot((snapshot) => {
+        return orders.
+        // where('accepted','==',false).
+        onSnapshot((snapshot) => {
             let data = [];
             snapshot.forEach(doc => {
                 data.push({ ...doc.data()})
@@ -118,6 +120,7 @@ useEffect(()=>{
             data.push({...doc.data()})    
             })
             console.log(data)
+            // alert(boyname)
             boys.doc(boyname).collection('orders').doc('order').set({
                 ...data[0]
             });
@@ -312,7 +315,7 @@ useEffect(()=>{
                 style={[styles.button,{flex:0.3,alignSelf:'center',right:10}]}>
                     <Text style={styles.buttonText}>ASSG</Text>
                 </TouchableOpacity>
-                <Text style={{flex:0,textAlign:'center',right:5,alignSelf:'center'}}>FBK</Text>
+                {item.FBK?<Text style={{flex:0,textAlign:'center',right:5,alignSelf:'center',color:'green'}}>FBK</Text>:<Text style={{flex:0,textAlign:'center',right:5,alignSelf:'center',color:'red'}}>FBK</Text>}
             </View>
                 ))}
             </ScrollView>
