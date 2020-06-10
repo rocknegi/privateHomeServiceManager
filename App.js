@@ -8,11 +8,14 @@ import Login from './src/components/Login';
 import Dashboard from './src/components/Dashboard';
 import landingPage from './src/components/LandingPage';
 import Account from './src/components/Account';
+import Settings from './src/components/Settings';
+
 Icon.loadFont()
 
 const DrawerNavigation = createDrawerNavigator({
   Dashboard,
-  Account
+  Account,
+  Settings
 })
 
 const AppNavigator = createSwitchNavigator({

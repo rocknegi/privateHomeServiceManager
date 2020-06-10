@@ -264,9 +264,11 @@ useEffect(()=>{
                 ))} */}
 
                 <View style={styles.header}>
+                    <TouchableWithoutFeedback onPress={()=>navigation.navigate('Settings')}>
                     <Image 
                     style={styles.menu}
                     source={require('../assets/images/menu.webp')}/>
+                    </TouchableWithoutFeedback>
                      <TouchableWithoutFeedback onPress={()=>navigation.navigate('Account')}>
                      <Image 
                     style={{height:25,width:25,alignSelf:'center',marginRight:10}}

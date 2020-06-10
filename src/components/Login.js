@@ -65,6 +65,7 @@ export default class index extends Component {
                                 style={[styles.input,{textAlign:'center'}]}
                                 autoCapitalize='none'
                                 value={this.state.password}
+                                secureTextEntry={true}
                                 onChangeText={(value)=>this.setState({password:value})}
                             />
                         </View>
