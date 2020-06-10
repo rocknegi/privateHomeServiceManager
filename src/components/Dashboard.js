@@ -149,7 +149,7 @@ useEffect(()=>{
                             </View>
                         </TouchableWithoutFeedback>
                     ))}
-                            <TouchableOpacity onPress={()=>setOrderModal(false)} style={[styles.button, { margin: 10 }]}>
+                            <TouchableOpacity onPress={()=>setOrderModal(false)} style={[styles.button, { margin: 10,padding:10 }]}>
                                 <Text style={styles.text}>
                                     close
                             </Text>
@@ -308,7 +308,7 @@ useEffect(()=>{
                 {/* <Text style={{flexGrow:0.2,textAlign:'center'}}>DIST</Text> */}
                 {/* <Text style={{flex:0.5,textAlign:'center'}}>ST</Text> */}
                 <TouchableOpacity 
-                 onPress={()=>sendOrder(item.name)}
+                 onPress={()=>sendOrder(item.id)}
                 style={[styles.button,{flex:0.3,alignSelf:'center',right:10}]}>
                     <Text style={styles.buttonText}>ASSG</Text>
                 </TouchableOpacity>
