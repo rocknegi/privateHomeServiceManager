@@ -142,6 +142,7 @@ const Dashboard = ({ navigation }) => {
                     }}
                     // onBackdropPress={toggleModal}
                     swipeDirection={['up', 'left', 'right', 'down']}
+                    useNativeDriver={true}
                 >
                     <View style={{ backgroundColor: '#fafafa' }}>
                         {data.map(item => (
@@ -168,6 +169,7 @@ const Dashboard = ({ navigation }) => {
                     }}
                     onBackdropPress={toggleModal}
                     swipeDirection={['up', 'left', 'right', 'down']}
+                    useNativeDriver={true}
                 >
                     {loading ?
                         <ActivityIndicator size="large" animating={true} />
@@ -196,7 +198,7 @@ const Dashboard = ({ navigation }) => {
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Time</Text>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.time} hrs</Text>
+                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.deliveryTime}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Total</Text>
@@ -206,7 +208,7 @@ const Dashboard = ({ navigation }) => {
                             ))}
                             <TouchableOpacity onPress={toggleModal} style={[styles.button, { margin: 10, padding: 10 }]}>
                                 <Text style={styles.text}>
-                                    close
+                                    Confirm
                             </Text>
                             </TouchableOpacity>
                         </View>}
@@ -214,6 +216,7 @@ const Dashboard = ({ navigation }) => {
                 <Modal
                     isVisible={imageModal}
                     swipeDirection={['up', 'left', 'right', 'down']}
+                    useNativeDriver={true}
                 >
                     <View style={{ backgroundColor: '#fafafa' }}>
                         <Image style={{ height: 400, width: 300, resizeMode: 'contain', alignSelf: 'center', margin: 10 }} source={{ uri: currentImage }} />
