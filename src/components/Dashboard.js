@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, SafeAreaView, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Button, ActivityIndicator, Image, Linking } from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 import Modal from 'react-native-modal';
+import haversine from 'haversine';
 
 import { styles, PrimayColor } from './theme/theme';
 
@@ -35,6 +36,7 @@ const boys = firestore().collection('Boys');
 // boys.doc('boy6').update({
 //     FBK:false
 // })
+
 
 const Dashboard = ({ navigation }) => {
     const [data, setData] = useState([]);
@@ -119,7 +121,30 @@ const Dashboard = ({ navigation }) => {
             snapshot.forEach(doc => {
                 data.push({ ...doc.data() })
             })
-            console.log(data)
+
+            const start = {
+                latitude: data[0].lat,
+                longitude: data[0].long
+            }
+            const end = {
+                latitude: 0,
+                longitude: 0
+            }
+
+            let dist = 0;
+
+            boys.doc(boyname).get().then(doc => {
+                end.latitude = doc.data().lat
+                end.longitude = doc.data().long
+                dist = haversine(start, end, { unit: 'meter' })
+
+                // console.log(dist)
+
+                boys.doc(boyname).update({
+                    dist: Math.ceil(dist) / 1000
+                })
+            })
+
             // alert(boyname)
             boys.doc(boyname).collection('orders').doc('order').set({
                 ...data[0]
@@ -335,12 +360,16 @@ const Dashboard = ({ navigation }) => {
                         {item.available ? <View style={styles.green}></View> : <View style={styles.red}></View>}
                         {/* <Text style={{flex:0.7,textAlign:'center'}}>{}</Text> */}
                         <TouchableWithoutFeedback onPress={() => { setCurrentImage(item.image); setImageModal(true) }}>
-                            <Image style={{ height: 50, width: 50, flex: 0.5, resizeMode: 'contain' }} source={{ uri: item.image }} />
+                            <Image style={{ height: 50, width: 50, flex: 0, resizeMode: 'contain' }} source={{ uri: item.image }} />
                         </TouchableWithoutFeedback>
                         <Text style={{ flexGrow: 0.5, flex: 1, textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap' }}>{item.name}</Text>
-                        <Text style={{ flexGrow: 1, flex: 1, textAlign: 'center', alignSelf: 'center' }}>{item.phone}</Text>
+                        <Text style={{ flexGrow: 0.4, flex: 1, textAlign: 'center', alignSelf: 'center' }}>{item.phone}</Text>
                         {/* <Text style={{flexGrow:0.2,textAlign:'center'}}>DIST</Text> */}
                         {/* <Text style={{flex:0.5,textAlign:'center'}}>ST</Text> */}
+                        <Text style={{ flex: 0.4, textAlign: 'center', alignSelf: 'center' }}>
+                            {item.dist}Km
+                        </Text>
+                        <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center' }}>ST</Text>
                         <TouchableOpacity
                             onPress={() => sendOrder(item.id)}
                             style={[styles.button, { flex: 0.3, alignSelf: 'center', right: 10 }]}>
