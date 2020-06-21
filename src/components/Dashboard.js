@@ -269,6 +269,10 @@ useEffect(()=>{
                     style={styles.menu}
                     source={require('../assets/images/menu.webp')}/>
                     </TouchableWithoutFeedback>
+                    <Image
+                    style={{ flex:0,height: 45, width: 45, marginRight: 10,resizeMode:'contain',alignSelf:'center' }}
+                    source={require('../assets/images/logo_white.png')}
+                />
                      <TouchableWithoutFeedback onPress={()=>navigation.navigate('Account')}>
                      <Image 
                     style={{height:25,width:25,alignSelf:'center',marginRight:10}}
