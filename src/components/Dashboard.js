@@ -5,6 +5,7 @@ import Modal from 'react-native-modal';
 import haversine from 'haversine';
 
 import { styles, PrimayColor } from './theme/theme';
+import moment from 'moment';
 
 const orders = firestore().collection('Managers');
 const boys = firestore().collection('Boys');
@@ -50,6 +51,9 @@ const Dashboard = ({ navigation }) => {
     const [currentImage, setCurrentImage] = useState('');
     const [loading, setLoading] = useState(true);
     const [boyname, setBoyName] = useState('');
+    const [firstData, setFirstData] = useState([]);
+    const [secondData, setSecondData] = useState([]);
+    const [phoneNo, setPhoneNo] = useState([]);
     const [map, setMap] = useState([{
         latitude: '',
         longitude: ''
@@ -77,6 +81,49 @@ const Dashboard = ({ navigation }) => {
             setBoysData(data)
         })
     }, [])
+
+    useEffect(() => {
+        const a = moment().isoWeekday()
+        console.log(moment().hour())
+        const phoneNos = [];
+        boysData.forEach(e => phoneNos.push(`+237${e.phone}@domainName.com`))
+
+        if (phoneNos.length >= 1) {
+            if (moment().hour() < 19) {
+                phoneNos.forEach(e => {
+                    boys.doc(e)
+                        .collection('14-18').
+                        doc(a.toString()).get().then(doc => {
+                            if (doc.data().hasOwnProperty('ST')) {
+                                boys.doc(e).update({
+                                    ST: doc.data()['ST']
+                                })
+                            }
+
+
+                        })
+                })
+            }
+            else {
+                phoneNos.forEach(e => {
+                    boys.doc(e)
+                        .collection('19-01').
+                        doc(a.toString()).get().then(doc => {
+                            if (doc.data().hasOwnProperty('ST')) {
+                                boys.doc(e).update({
+                                    ST: doc.data()['ST']
+                                })
+                            }
+
+
+                        })
+                })
+            }
+
+        }
+        // boysData.forEach(e => console.log(e.phone))
+
+    }, [boysData])
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -339,12 +386,16 @@ const Dashboard = ({ navigation }) => {
                         {item.available ? <View style={styles.green}></View> : <View style={styles.red}></View>}
                         {/* <Text style={{flex:0.7,textAlign:'center'}}>{}</Text> */}
                         <TouchableWithoutFeedback onPress={() => { setCurrentImage(item.image); setImageModal(true) }}>
-                            <Image style={{ height: 50, width: 50, flex: 0.5, resizeMode: 'contain' }} source={{ uri: item.image }} />
+                            <Image style={{ height: 50, width: 50, flex: 0, resizeMode: 'contain' }} source={{ uri: item.image }} />
                         </TouchableWithoutFeedback>
                         <Text style={{ flexGrow: 0.5, flex: 1, textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap' }}>{item.name}</Text>
-                        <Text style={{ flexGrow: 1, flex: 1, textAlign: 'center', alignSelf: 'center' }}>{item.phone}</Text>
+                        <Text style={{ flexGrow: 0.4, flex: 1, textAlign: 'center', alignSelf: 'center' }}>{item.phone}</Text>
                         {/* <Text style={{flexGrow:0.2,textAlign:'center'}}>DIST</Text> */}
                         {/* <Text style={{flex:0.5,textAlign:'center'}}>ST</Text> */}
+                        <Text style={{ flex: 0.4, textAlign: 'center', alignSelf: 'center' }}>
+                            {item.dist}Km
+ </Text>
+                        {item.ST == 1 ? <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'green' }}>ST</Text> : <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'red' }}>ST</Text>}
                         <TouchableOpacity
                             onPress={() => sendOrder(item.id)}
                             style={[styles.button, { flex: 0.3, alignSelf: 'center', right: 10 }]}>
@@ -369,7 +420,7 @@ const Dashboard = ({ navigation }) => {
                         <Text style={{ flex: 0.4, textAlign: 'center', alignSelf: 'center' }}>
                             {item.dist}Km
                         </Text>
-                        <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center' }}>ST</Text>
+                        {item.ST == 1 ? <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'green' }}>ST</Text> : <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'red' }}>ST</Text>}
                         <TouchableOpacity
                             onPress={() => sendOrder(item.id)}
                             style={[styles.button, { flex: 0.3, alignSelf: 'center', right: 10 }]}>
