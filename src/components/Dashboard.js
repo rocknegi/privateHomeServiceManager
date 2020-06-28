@@ -45,6 +45,9 @@ const Dashboard = ({ navigation }) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [orderModal, setOrderModal] = useState(false);
     const [imageModal, setImageModal] = useState(false);
+    const [STModal, setSTModal] = useState(false);
+    const [ST1418Modal, set1418STModal] = useState(false);
+    const [ST1901Modal, set1901STModal] = useState(false);
     const [mapModal, setMapModal] = useState(false);
     const [currentUser, setCurrentUser] = useState('');
     const [currentOrderData, setCurrentOrderData] = useState([]);
@@ -84,7 +87,6 @@ const Dashboard = ({ navigation }) => {
 
     useEffect(() => {
         const a = moment().isoWeekday()
-        console.log(moment().hour())
         const phoneNos = [];
         boysData.forEach(e => phoneNos.push(`+237${e.phone}@domainName.com`))
 
@@ -202,6 +204,29 @@ const Dashboard = ({ navigation }) => {
 
     }
 
+    const showWeekPLanner = (id) => {
+        setLoading(true);
+        console.log(id)
+        boys.doc(id).collection('14-18').get().then(snapshot => {
+            let data = [];
+            snapshot.forEach(doc => {
+                data.push(doc.data());
+                set1418STModal(data)
+            });
+        });
+
+        boys.doc(id).collection('19-01').get().then(snapshot => {
+            let data = [];
+            snapshot.forEach(doc => {
+                data.push(doc.data());
+                set1901STModal(data);
+                setLoading(false)
+            });
+        });
+
+        setSTModal(true)
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -287,10 +312,12 @@ const Dashboard = ({ navigation }) => {
                 </Modal>
                 <Modal
                     isVisible={imageModal}
-                    swipeDirection={['up', 'left', 'right', 'down']}
                     useNativeDriver={true}
+                    animationIn="slideInUp"
+                    onBackdropPress={() => setImageModal(false)}
+                    style={{ marginTop: 10, backgroundColor: '#fafafa' }}
                 >
-                    <View style={{ backgroundColor: '#fafafa' }}>
+                    <View>
                         <Image style={{ height: 400, width: 300, resizeMode: 'contain', alignSelf: 'center', margin: 10 }} source={{ uri: currentImage }} />
                         <TouchableOpacity onPress={() => setImageModal(false)} style={[styles.button, { margin: 10, padding: 10 }]}>
                             <Text style={styles.text}>
@@ -298,6 +325,59 @@ const Dashboard = ({ navigation }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
+                </Modal>
+                <Modal
+                    isVisible={STModal}
+                    useNativeDriver={true}
+                    animationIn="slideInUp"
+                    onBackdropPress={() => setSTModal(false)}
+                    style={{ marginTop: 10, }}
+                >
+                    <View style={{ backgroundColor: '#fafafa' }}>
+                        <View style={[{ marginBottom: '0%', backgroundColor: '#97b54a', marginLeft: 0 }]}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 20, padding: 10, textAlign: 'center', color: '#fafafa' }}>Day/Week Planner</Text>
+                        </View>
+                        <View style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8 }]}>
+                            <Text style={[styles.text,]}>   </Text>
+                            <Text style={styles.text}>Mo</Text>
+                            <Text style={styles.text}>TUE</Text>
+                            <Text style={styles.text}>WED</Text>
+                            <Text style={styles.text}>THU</Text>
+                            <Text style={styles.text}>FR</Text>
+                            <Text style={styles.text}>SA</Text>
+                            <Text style={styles.text}>SO</Text>
+                        </View>
+                        {loading ?
+                            <ActivityIndicator size="large" /> :
+                            <>
+                                <View style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8, }]}>
+                                    <Text style={styles.text}>14 {"\n"}  |{"\n"}18</Text>
+                                    {ST1418Modal.map(item => (
+                                        <View
+                                            style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8, alignSelf: 'center' }]}>
+                                            <Text style={[styles.text,]}>   </Text>
+                                            <Text style={[styles.text, { alignSelf: 'flex-end' }]}>{item.ST}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                                <View style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8, }]}>
+                                    <Text style={[styles.text]}>19 {"\n"}  |{"\n"}01</Text>
+                                    {ST1901Modal.map(item => (
+                                        <View
+                                            style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8, alignSelf: 'center' }]}>
+                                            <Text style={[styles.text,]}>   </Text>
+                                            <Text style={styles.text}>{item.ST}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            </>
+                        }
+                    </View>
+                    <TouchableOpacity
+                        onPress={() => setSTModal(false)}
+                        style={[styles.button, { marginTop: 10, width: '30%', height: '5%' }]}>
+                        <Text style={[styles.buttonText, { alignSelf: 'center', padding: 5 }]}>Close</Text>
+                    </TouchableOpacity>
                 </Modal>
                 {/* <Text style={{ fontSize: 20, padding: 10 }}>Incoming orders</Text>
                
@@ -361,7 +441,7 @@ const Dashboard = ({ navigation }) => {
                     <Text style={{ flex: 0.7, textAlign: 'center' }}>Desc</Text>
                     <Text style={{ flex: 0.8, textAlign: 'center' }}>TM</Text>
                     <Text style={{ flex: 0.5, textAlign: 'center' }}>SRV</Text>
-                    <Text style={{ flexGrow: 1, flex: 1, textAlign: 'center' }}>Acc</Text>
+                    <Text style={{ flexGrow: 1, flex: 1, textAlign: 'center' }}>Name</Text>
                     <Text style={{ flex: 1, textAlign: 'center', right: 5 }}>REST</Text>
                     <Text style={{ flex: 0, textAlign: 'center', right: 5 }}>LOC</Text>
                 </View>
@@ -395,7 +475,11 @@ const Dashboard = ({ navigation }) => {
                         <Text style={{ flex: 0.4, textAlign: 'center', alignSelf: 'center' }}>
                             {item.dist}Km
  </Text>
-                        {item.ST == 1 ? <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'green' }}>ST</Text> : <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'red' }}>ST</Text>}
+                        <TouchableOpacity style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center' }}
+                            onPress={() => showWeekPLanner(item.id)}
+                        >
+                            <Text style={{ textAlign: 'center' }}>ST</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => sendOrder(item.id)}
                             style={[styles.button, { flex: 0.3, alignSelf: 'center', right: 10 }]}>
@@ -420,7 +504,11 @@ const Dashboard = ({ navigation }) => {
                         <Text style={{ flex: 0.4, textAlign: 'center', alignSelf: 'center' }}>
                             {item.dist}Km
                         </Text>
-                        {item.ST == 1 ? <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'green' }}>ST</Text> : <Text style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center', color: 'red' }}>ST</Text>}
+                        <TouchableOpacity style={{ flex: 0.3, textAlign: 'center', alignSelf: 'center' }}
+                            onPress={() => showWeekPLanner(item.id)}
+                        >
+                            <Text style={{ textAlign: 'center' }}>ST</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => sendOrder(item.id)}
                             style={[styles.button, { flex: 0.3, alignSelf: 'center', right: 10 }]}>

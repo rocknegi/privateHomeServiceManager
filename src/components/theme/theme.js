@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native'
 export const PrimayColor = '#D87314'
 export const styles = StyleSheet.create({
-    header:{
-        backgroundColor:PrimayColor,
-        flexDirection:'row',
-        justifyContent:'space-between'
+    header: {
+        backgroundColor: PrimayColor,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     container: {
         flex: 1,
@@ -19,10 +19,10 @@ export const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fafafa',
-        textAlign:'center'
+        textAlign: 'center'
     },
     text: {
-        textAlign:'center'
+        textAlign: 'center'
     },
     form: {
         flex: 1,
@@ -42,49 +42,49 @@ export const styles = StyleSheet.create({
     },
     card: {
         elevation: 8,
-        height:100,
-        padding:15,
-        margin:10,
-        borderRadius:6,
-        minWidth:150,
-        backgroundColor:"#eee"
+        height: 100,
+        padding: 15,
+        margin: 10,
+        borderRadius: 6,
+        minWidth: 150,
+        backgroundColor: "#eee"
     },
-    menu:{
-        width:50,
-        height:50,
-        padding:0,
+    menu: {
+        width: 50,
+        height: 50,
+        padding: 0,
     },
-    heading:{
-        fontSize:18,
-        textAlign:'center',
-        backgroundColor:'#ed8f47',
-        marginTop:10,
-        padding:5,
-        color:'#fafafa'
+    heading: {
+        fontSize: 18,
+        textAlign: 'center',
+        backgroundColor: '#ed8f47',
+        marginTop: 10,
+        padding: 5,
+        color: '#fafafa'
     },
-    table:{
-        flexDirection:'row',
+    table: {
+        flexDirection: 'row',
         // justifyContent:'space-between',
-        padding:10,
-        paddingHorizontal:0
+        padding: 10,
+        paddingHorizontal: 0
     },
-    green:{
-        backgroundColor:'green',
-        flex:0,
-        height:20,
-        width:20,
-        borderRadius:10,
-        marginLeft:5,
-        alignSelf:'center'
+    green: {
+        backgroundColor: 'green',
+        flex: 0,
+        height: 20,
+        width: 20,
+        borderRadius: 10,
+        marginLeft: 5,
+        alignSelf: 'center'
     },
-    red:{
-        backgroundColor:'red',
-        flex:0,
-        height:20,
-        width:20,
-        borderRadius:10,
-        marginLeft:5,
-        alignSelf:'center'
+    red: {
+        backgroundColor: 'red',
+        flex: 0,
+        height: 20,
+        width: 20,
+        borderRadius: 10,
+        marginLeft: 5,
+        alignSelf: 'center'
     },
     buttonContainer: {
         backgroundColor: PrimayColor,
@@ -94,4 +94,11 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 20
     },
+    xAxis: {
+        alignItems: 'flex-start',
+        marginLeft: '14%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 5,
+    }
 })
