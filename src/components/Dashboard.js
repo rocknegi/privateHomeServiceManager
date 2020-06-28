@@ -42,6 +42,7 @@ const boys = firestore().collection('Boys');
 const Dashboard = ({ navigation }) => {
     const [data, setData] = useState([]);
     const [boysData, setBoysData] = useState([]);
+    const [boysDistanceData, setBoysDistanceData] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
     const [orderModal, setOrderModal] = useState(false);
     const [imageModal, setImageModal] = useState(false);
@@ -53,6 +54,7 @@ const Dashboard = ({ navigation }) => {
     const [currentOrderData, setCurrentOrderData] = useState([]);
     const [currentImage, setCurrentImage] = useState('');
     const [loading, setLoading] = useState(true);
+    const [showDistance, showDistanceModal] = useState(false);
     const [boyname, setBoyName] = useState('');
     const [firstData, setFirstData] = useState([]);
     const [secondData, setSecondData] = useState([]);
@@ -69,7 +71,7 @@ const Dashboard = ({ navigation }) => {
             onSnapshot((snapshot) => {
                 let data = [];
                 snapshot.forEach(doc => {
-                    data.push({ ...doc.data() })
+                    data.push(({ ...doc.data(), id: doc.id }))
                 })
                 setData(data)
             })
@@ -81,7 +83,8 @@ const Dashboard = ({ navigation }) => {
             snapshot.forEach(doc => {
                 data.push(({ ...doc.data(), id: doc.id }))
             })
-            setBoysData(data)
+            setBoysData(data);
+            setBoysDistanceData(data)
         })
     }, [])
 
@@ -171,11 +174,11 @@ const Dashboard = ({ navigation }) => {
                 data.push({ ...doc.data() })
             })
 
-            const start = {
+            const end = {
                 latitude: data[0].lat,
                 longitude: data[0].long
             }
-            const end = {
+            const start = {
                 latitude: 0,
                 longitude: 0
             }
@@ -183,11 +186,11 @@ const Dashboard = ({ navigation }) => {
             let dist = 0;
 
             boys.doc(boyname).get().then(doc => {
-                end.latitude = doc.data().lat
-                end.longitude = doc.data().long
+                start.latitude = doc.data().lat;
+                start.longitude = doc.data().long;
+                console.log('f')
+                console.log(start, end)
                 dist = haversine(start, end, { unit: 'meter' })
-
-                // console.log(dist)
 
                 boys.doc(boyname).update({
                     dist: Math.ceil(dist) / 1000
@@ -206,7 +209,7 @@ const Dashboard = ({ navigation }) => {
 
     const showWeekPLanner = (id) => {
         setLoading(true);
-        console.log(id)
+
         boys.doc(id).collection('14-18').get().then(snapshot => {
             let data = [];
             snapshot.forEach(doc => {
@@ -225,6 +228,41 @@ const Dashboard = ({ navigation }) => {
         });
 
         setSTModal(true)
+    }
+
+    const calculateDistance = (id) => {
+        showDistanceModal(true);
+        setLoading(true);
+
+        const start = {
+            latitude: 0,
+            longitude: 0
+        }
+        const end = {
+            latitude: 0,
+            longitude: 0
+        }
+        let dist = 0;
+
+        orders.doc(id).collection('Orders').doc('order').get().then(doc => {
+
+            end.latitude = doc.data().lat;
+            end.longitude = doc.data().long;
+
+            boysData.forEach(e => {
+                start.latitude = e.lat;
+                start.longitude = e.long;
+                console.log('gg')
+                console.log(start, end)
+                dist = haversine(start, end, { unit: 'meter' });
+
+                boys.doc(e.id).update({
+                    distance: Math.round(Math.ceil(dist) / 1000)
+                })
+            })
+        });
+
+
     }
 
     return (
@@ -315,7 +353,7 @@ const Dashboard = ({ navigation }) => {
                     useNativeDriver={true}
                     animationIn="slideInUp"
                     onBackdropPress={() => setImageModal(false)}
-                    style={{ marginTop: 10, backgroundColor: '#fafafa' }}
+                    style={{ marginTop: 10 }}
                 >
                     <View>
                         <Image style={{ height: 400, width: 300, resizeMode: 'contain', alignSelf: 'center', margin: 10 }} source={{ uri: currentImage }} />
@@ -325,6 +363,32 @@ const Dashboard = ({ navigation }) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
+                </Modal>
+                <Modal
+                    isVisible={showDistance}
+                    useNativeDriver={true}
+                    animationIn="slideInUp"
+                    onBackdropPress={() => showDistanceModal(false)}
+                    style={{ marginTop: 10, }}
+                >
+                    <>
+                        <View style={{ backgroundColor: '#fafafa' }}>
+                            {boysDistanceData.sort((a, b) => a['distance'] - b['distance']).map(item => (
+                                <View key={item.name} style={[styles.table, { justifyContent: 'space-between', paddingRight: 5, paddingLeft: 5 }]}>
+                                    <TouchableWithoutFeedback onPress={() => { setCurrentImage(item.image); setImageModal(true) }}>
+                                        <Image style={{ height: 50, width: 50, resizeMode: 'contain' }} source={{ uri: item.image }} />
+                                    </TouchableWithoutFeedback>
+                                    <Text style={{ textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap' }}>{item.name}</Text>
+                                    <Text style={{ textAlign: 'center', alignSelf: 'center', flexWrap: 'wrap' }}>{item.distance} Km</Text>
+                                </View>
+                            ))}
+                        </View>
+                        <TouchableOpacity onPress={() => showDistanceModal(false)} style={[styles.button, { margin: 10, padding: 10 }]}>
+                            <Text style={styles.text}>
+                                close
+                            </Text>
+                        </TouchableOpacity>
+                    </>
                 </Modal>
                 <Modal
                     isVisible={STModal}
@@ -447,13 +511,13 @@ const Dashboard = ({ navigation }) => {
                 </View>
                 {data.map(item => (
                     <View key={item.orderNo} style={styles.table}>
-                        <Text style={{ flex: 0.5, textAlign: 'center' }}>{item.orderNo}</Text>
+                        <Text onPress={() => calculateDistance(item.id)} style={{ flex: 0.5, textAlign: 'center' }}>{item.orderNo}</Text>
                         <Text onPress={() => openOrderModal(item.phoneNo)} style={{ flex: 0.7, textAlign: 'center' }}>Desc</Text>
                         <Text style={{ flex: 0.8, textAlign: 'center' }}>{item.deliveryTime}</Text>
                         <Text style={{ flex: 0.5, textAlign: 'center' }}>{item.serviceDuration}</Text>
                         <Text style={{ flexGrow: 1, flex: 1, textAlign: 'center' }}>{item.name}</Text>
                         <Text style={{ flex: 1, textAlign: 'center', right: 5 }}>{item.balance}</Text>
-                        <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/maps/place/38.915645,-77.220796`)}>
+                        <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/maps/place/${item.lat},${item.long}`)}>
                             <Text style={{ flex: 0, textAlign: 'center', right: 5 }}>LOC</Text>
                         </TouchableOpacity>
                     </View>
