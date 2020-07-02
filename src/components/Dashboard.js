@@ -54,6 +54,7 @@ const Dashboard = ({ navigation }) => {
     const [currentOrderData, setCurrentOrderData] = useState([]);
     const [currentImage, setCurrentImage] = useState('');
     const [loading, setLoading] = useState(true);
+    const [loadingDesc, setLoadingDesc] = useState(true);
     const [showDistance, showDistanceModal] = useState(false);
     const [boyname, setBoyName] = useState('');
     const [firstData, setFirstData] = useState([]);
@@ -148,7 +149,7 @@ const Dashboard = ({ navigation }) => {
             data.push(({ ...doc.data(), id: doc.id }));
             setCurrentOrderData(data);
             // setTimeout(()=>{
-            setLoading(false)
+            setLoadingDesc(false)
             // },2000)
         })
         // .then(doc=>{
@@ -306,7 +307,7 @@ const Dashboard = ({ navigation }) => {
                     swipeDirection={['up', 'left', 'right', 'down']}
                     useNativeDriver={true}
                 >
-                    {loading ?
+                    {loadingDesc ?
                         <ActivityIndicator size="large" animating={true} />
                         : <View style={{ backgroundColor: '#fafafa' }}>
                             {currentOrderData.map(item => (
