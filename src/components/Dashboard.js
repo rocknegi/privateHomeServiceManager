@@ -6,6 +6,7 @@ import haversine from 'haversine';
 
 import { styles, PrimayColor } from './theme/theme';
 import moment from 'moment';
+import OrderSummary from './orderSummary';
 
 const orders = firestore().collection('Managers');
 const boys = firestore().collection('Boys');
@@ -60,6 +61,8 @@ const Dashboard = ({ navigation }) => {
     const [firstData, setFirstData] = useState([]);
     const [secondData, setSecondData] = useState([]);
     const [phoneNo, setPhoneNo] = useState([]);
+    const [total, setTotal] = useState(0);
+
     const [map, setMap] = useState([{
         latitude: '',
         longitude: ''
@@ -145,13 +148,24 @@ const Dashboard = ({ navigation }) => {
         const str = phone.toString()
         let data = [];
 
-        orders.doc(str).collection('Orders').doc('order').onSnapshot(doc => {
+        // orders.doc(str).collection('Orders').doc('order').onSnapshot(doc => {
+        //     data.push(({ ...doc.data(), id: doc.id }));
+        //     setCurrentOrderData(data);
+        //     console.log('gg', data)
+        //     // setTimeout(()=>{
+        //     setLoadingDesc(false)
+        //     // },2000)
+        // })
+
+
+        orders.doc(str).collection('Orders').doc('order').get().then(doc => {
             data.push(({ ...doc.data(), id: doc.id }));
             setCurrentOrderData(data);
-            // setTimeout(()=>{
+            orders.doc(str).get().then(doc => setTotal(doc.data().balance))
             setLoadingDesc(false)
-            // },2000)
-        })
+        });
+
+
         // .then(doc=>{
 
         // })
@@ -304,44 +318,14 @@ const Dashboard = ({ navigation }) => {
                         // margin: 0,
                     }}
                     onBackdropPress={toggleModal}
-                    swipeDirection={['up', 'left', 'right', 'down']}
+                    swipeDirection={['up', 'down']}
+                    propagateSwipe={true}
                     useNativeDriver={true}
                 >
                     {loadingDesc ?
                         <ActivityIndicator size="large" animating={true} />
                         : <View style={{ backgroundColor: '#fafafa' }}>
-                            {currentOrderData.map(item => (
-                                <View key={item.id} style={{ alignItems: 'center', margin: 10 }}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Balance</Text>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.balance}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Champagne</Text>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.champagne}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Champagne Glass</Text>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.champagneGlass}</Text>
-                                    </View>
-                                    {/* <View style={{flexDirection:'row'}}>
-                                <Text  style={[styles.text,{fontSize:20,flex:1}]}>Delivery Time</Text>
-                                <Text  style={[styles.text,{fontSize:20,flex:1}]}>{item.deliveryTime}</Text>
-                                    </View> */}
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Hotess</Text>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.hotess}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Time</Text>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.deliveryTime}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>Total</Text>
-                                        <Text style={[styles.text, { fontSize: 20, flex: 1 }]}>{item.total}</Text>
-                                    </View>
-                                </View>
-                            ))}
+                            <OrderSummary items={currentOrderData} total={total} />
                             <TouchableOpacity onPress={toggleModal} style={[styles.button, { margin: 10, padding: 10 }]}>
                                 <Text style={styles.text}>
                                     Confirm
