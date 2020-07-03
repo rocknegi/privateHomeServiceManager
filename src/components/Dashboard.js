@@ -71,7 +71,7 @@ const Dashboard = ({ navigation }) => {
 
     useEffect(() => {
         return orders.
-            // where('accepted','==',false).
+            // where('accepted', '==', false).
             onSnapshot((snapshot) => {
                 let data = [];
                 snapshot.forEach(doc => {
@@ -224,25 +224,24 @@ const Dashboard = ({ navigation }) => {
 
     const showWeekPLanner = (id) => {
         setLoading(true);
+        setSTModal(true)
 
         boys.doc(id).collection('14-18').get().then(snapshot => {
             let data = [];
             snapshot.forEach(doc => {
                 data.push(doc.data());
-                set1418STModal(data)
             });
+            set1418STModal(data)
         });
 
         boys.doc(id).collection('19-01').get().then(snapshot => {
             let data = [];
             snapshot.forEach(doc => {
                 data.push(doc.data());
-                set1901STModal(data);
-                setLoading(false)
             });
+            set1901STModal(data);
+            setLoading(false)
         });
-
-        setSTModal(true)
     }
 
     const calculateDistance = (id) => {
