@@ -183,11 +183,13 @@ const Dashboard = ({ navigation }) => {
     }
     const setOrder = (phone) => {
         const number = phone;
-        orders.doc(number.toString()).collection('Orders').get().then(snapshot => {
+        orders.doc(number.toString()).get().then(snapshot => {
             let data = [];
-            snapshot.forEach(doc => {
-                data.push({ ...doc.data() })
-            })
+            data.push(snapshot.data())
+            // console.log(data)
+            // snapshot.forEach(doc => {
+            //     data.push({ ...doc.data() })
+            // })
 
             const end = {
                 latitude: data[0].lat,
@@ -200,13 +202,14 @@ const Dashboard = ({ navigation }) => {
 
             let dist = 0;
 
+
             boys.doc(boyname).get().then(doc => {
                 start.latitude = doc.data().lat;
                 start.longitude = doc.data().long;
-                console.log('f')
-                console.log(start, end)
+                // console.log('f')
+                // console.log(start, end)
                 dist = haversine(start, end, { unit: 'meter' })
-
+                // console.log(dist)
                 boys.doc(boyname).update({
                     dist: Math.ceil(dist) / 1000
                 })
