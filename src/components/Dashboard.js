@@ -3,6 +3,7 @@ import { View, Text, SafeAreaView, ScrollView, TouchableWithoutFeedback, Touchab
 import firestore from '@react-native-firebase/firestore';
 import Modal from 'react-native-modal';
 import haversine from 'haversine';
+import { Switch } from 'react-native-switch';
 
 import { styles, PrimayColor } from './theme/theme';
 import moment from 'moment';
@@ -62,6 +63,7 @@ const Dashboard = ({ navigation }) => {
     const [secondData, setSecondData] = useState([]);
     const [phoneNo, setPhoneNo] = useState([]);
     const [total, setTotal] = useState(0);
+    const [completed, isCompleted] = useState(false);
 
     const [map, setMap] = useState([{
         latitude: '',
@@ -71,7 +73,7 @@ const Dashboard = ({ navigation }) => {
 
     useEffect(() => {
         return orders.
-            // where('accepted', '==', false).
+            where('accepted', '==', false).
             onSnapshot((snapshot) => {
                 let data = [];
                 snapshot.forEach(doc => {
@@ -282,6 +284,22 @@ const Dashboard = ({ navigation }) => {
 
     }
 
+    const confirmOrder = () => {
+        orders.doc(currentUser).update({
+            accepted: true
+        })
+        toggleModal()
+    }
+
+    const toggleCompleted = () => {
+        isCompleted(!completed);
+        toggleModal();
+        orders.doc(currentUser).update({
+            confirmed: true
+        })
+        isCompleted(false)
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -317,22 +335,49 @@ const Dashboard = ({ navigation }) => {
                     onModalShow={afterModalOpen}
                     style={{
                         justifyContent: 'center',
-                        // margin: 0,
                     }}
-                    onBackdropPress={toggleModal}
-                    swipeDirection={['up', 'down']}
+                    // swipeDirection={['up', 'down']}
                     propagateSwipe={true}
                     useNativeDriver={true}
                 >
                     {loadingDesc ?
                         <ActivityIndicator size="large" animating={true} />
                         : <View style={{ backgroundColor: '#fafafa' }}>
-                            <OrderSummary items={currentOrderData} total={total} />
-                            <TouchableOpacity onPress={toggleModal} style={[styles.button, { margin: 10, padding: 10 }]}>
-                                <Text style={styles.text}>
-                                    Confirm
+                            <ScrollView>
+                                <OrderSummary items={currentOrderData} total={total} />
+                            </ScrollView>
+                            <View style={{ marginBottom: 20, marginTop: 10, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                                <TouchableOpacity onPress={confirmOrder} style={[styles.button, { padding: 10 }]}>
+                                    <Text style={styles.text}>
+                                        Confirm
                             </Text>
-                            </TouchableOpacity>
+                                </TouchableOpacity>
+                                <Text style={{ fontSize: 15 }}>Completed</Text>
+                                <Switch
+                                    onValueChange={toggleCompleted}
+                                    value={completed}
+                                    activeText={'NO'}
+                                    inActiveText={'Yes'}
+                                    circleSize={32}
+                                    barHeight={35}
+                                    circleBorderWidth={1}
+                                    backgroundActive={'#a7eb9b'}
+                                    backgroundInactive={'#f7867e'}
+                                    circleActiveColor={'#57d941'}
+                                    circleInActiveColor={'red'}
+                                    changeValueImmediately={true}
+                                    renderInsideCircle={() => completed ? <Text style={{ color: '#fafafa', fontSize: 11 }}>Yes</Text> : <Text style={{ color: '#fafafa', fontSize: 11 }}>No</Text>} // custom component to render inside the Switch circle (Text, Image, etc.)
+                                    changeValueImmediately={true} // if rendering inside circle, change state immediately or wait for animation to complete
+                                    innerCircleStyle={{ alignItems: "center", justifyContent: "center" }} // style for inner animated circle for what you (may) be rendering inside the circle
+                                    renderActiveText={false}
+                                    renderInActiveText={false}
+                                    switchLeftPx={2} // denominator for logic when sliding to TRUE position. Higher number = more space from RIGHT of the circle to END of the slider
+                                    switchRightPx={2} // denominator for logic when sliding to FALSE position. Higher number = more space from LEFT of the circle to BEGINNING of the slider
+                                    switchWidthMultiplier={2} // multipled by the `circleSize` prop to calculate total width of the Switch
+                                    switchBorderRadius={30} // Sets the border Radius of the switch slider. If unset, it remains the circleSize.
+
+                                />
+                            </View>
                         </View>}
                 </Modal>
                 <Modal
@@ -426,8 +471,8 @@ const Dashboard = ({ navigation }) => {
                     </View>
                     <TouchableOpacity
                         onPress={() => setSTModal(false)}
-                        style={[styles.button, { marginTop: 10, width: '30%', height: '5%' }]}>
-                        <Text style={[styles.buttonText, { alignSelf: 'center', padding: 5 }]}>Close</Text>
+                        style={[styles.button, { marginTop: 10, width: '30%' }]}>
+                        <Text style={[styles.buttonText, { alignSelf: 'center', padding: 10 }]}>Close</Text>
                     </TouchableOpacity>
                 </Modal>
                 {/* <Text style={{ fontSize: 20, padding: 10 }}>Incoming orders</Text>
