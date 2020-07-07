@@ -447,12 +447,12 @@ const Dashboard = ({ navigation }) => {
                             <ActivityIndicator size="large" /> :
                             <>
                                 <View style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8, }]}>
-                                    <Text style={styles.text}>14 {"\n"}  |{"\n"}18</Text>
+                                    <Text style={styles.text}>14 {"\n"}  |{"\n"}19</Text>
                                     {ST1418Modal.map(item => (
                                         <View
                                             style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8, alignSelf: 'center' }]}>
                                             <Text style={[styles.text,]}>   </Text>
-                                            <Text style={[styles.text, { alignSelf: 'flex-end' }]}>{item.ST}</Text>
+                                            <Text style={item.ST === '1' ? [styles.text, { color: 'green' }] : item.ST === '0' ? [styles.text, { color: 'red' }] : [styles.text, { color: 'blue' }]}>{item.ST}</Text>
                                         </View>
                                     ))}
                                 </View>
@@ -462,7 +462,7 @@ const Dashboard = ({ navigation }) => {
                                         <View
                                             style={[styles.xAxis, { marginLeft: 0, paddingHorizontal: 8, alignSelf: 'center' }]}>
                                             <Text style={[styles.text,]}>   </Text>
-                                            <Text style={styles.text}>{item.ST}</Text>
+                                            <Text style={item.ST === '1' ? [styles.text, { color: 'green' }] : item.ST === '0' ? [styles.text, { color: 'red' }] : [styles.text, { color: 'blue' }]}>{item.ST}</Text>
                                         </View>
                                     ))}
                                 </View>
@@ -556,7 +556,7 @@ const Dashboard = ({ navigation }) => {
                 ))}
 
 
-                <Text style={[styles.heading, { backgroundColor: '#93c449' }]}>Grils/ Hotess</Text>
+                <Text style={[styles.heading, { backgroundColor: '#93c449' }]}>Girls/ Hostess</Text>
                 {boysData.filter(e => e.gender === 'Female').map(item => (
                     <View key={item.name} style={styles.table}>
                         {item.available ? <View style={styles.green}></View> : <View style={styles.red}></View>}
