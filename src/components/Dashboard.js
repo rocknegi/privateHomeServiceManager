@@ -73,7 +73,7 @@ const Dashboard = ({ navigation }) => {
 
     useEffect(() => {
         return orders.
-            where('accepted', '==', false).
+            where('completed', '==', false).
             onSnapshot((snapshot) => {
                 let data = [];
                 snapshot.forEach(doc => {
@@ -286,7 +286,7 @@ const Dashboard = ({ navigation }) => {
 
     const confirmOrder = () => {
         orders.doc(currentUser).update({
-            accepted: true
+            confirmed: true
         })
         toggleModal()
     }
@@ -295,7 +295,7 @@ const Dashboard = ({ navigation }) => {
         isCompleted(!completed);
         toggleModal();
         orders.doc(currentUser).update({
-            confirmed: true
+            completed: true
         })
         isCompleted(false)
     }
